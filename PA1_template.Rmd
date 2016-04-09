@@ -32,8 +32,19 @@ stepsmedian <- median(total$totalsteps, na.rm=TRUE)
 + Median: `r stepsmedian`
 
 ## What is the average daily activity pattern?
+* Make a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+```{r}
+daily <- aggregate(data$steps, by=list(data$interval), FUN=mean, na.rm=TRUE)
+names(daily) <- c("interval", "meansteps")
+plot(y=daily$meansteps, x=daily$interval, type="l", xlab="Interval", ylab="Average Steps")
+```
 
-
+* Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps
+```{r}
+maxrow <- daily[daily$meansteps == max(daily$meansteps), ]
+interval <- maxrow$interval
+```
++ Interval: `r interval`
 
 ## Imputing missing values
 
