@@ -47,7 +47,36 @@ interval <- maxrow$interval
 + Interval: `r interval`
 
 ## Imputing missing values
+* Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with 𝙽𝙰s)
+```{r}
+totalmissing <- sum(is.na(data$steps))
+```
++ Total Rows Missing: `r totalmissing`
 
+* Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
++ The average for each interval will be used to replace missing step values for intervals.
+* Create a new dataset that is equal to the original dataset but with the missing data filled in.
+```{r}
+completeData <- data
+for (i in 1:nrow(completeData)){
+  if ( is.na(completeData[i, "steps"])) {
+    completeData[i, ]$steps <- daily[daily$interval == completeData[i,]$interval,]$meansteps
+  }
+}
+```
 
+* Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+```{r}
+total <- aggregate(completeData$steps, by=list(completeData$date), FUN=sum)
+names(total) <- c("date", "totalsteps")
+stepsmean <- mean(total$totalsteps, na.rm=TRUE)
+stepsmedian <- median(total$totalsteps, na.rm=TRUE)
+hist(total$totalsteps, xlab="Total Steps Per Day", main="Histogram of Total Steps Per Day")
+```
+
++ Mean: `r stepsmean`
++ Median: `r stepsmedian`
++ The values don't differ to any significant degree.  There doesn't appear to be any real impact on inputting missing data with this particular strategy.
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
