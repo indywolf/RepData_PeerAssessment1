@@ -79,4 +79,24 @@ hist(total$totalsteps, xlab="Total Steps Per Day", main="Histogram of Total Step
 + The values don't differ to any significant degree.  There doesn't appear to be any real impact on inputting missing data with this particular strategy.
 
 ## Are there differences in activity patterns between weekdays and weekends?
-
+* Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
+```{r}
+completeData$daytype <- weekdays(completeData$date)
+for(i in 1:nrow(completeData)){
+  if ( completeData[i,]$daytype %in% c("Saturday", "Sunday")) {
+    completeData[i,]$daytype <- "weekend"
+  }
+  else {
+    completeData[i,]$daytype <- "weekday"
+  }
+}
+completeData$daytype <- factor(completeData$daytype)
+```
+* Make a panel plot containing a time series plot (i.e. 𝚝𝚢𝚙𝚎 = "𝚕") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+```{r}
+daily <- aggregate(completeData$steps, by=list(completeData$interval, completeData$daytype), FUN=mean, na.rm=TRUE)
+names(daily) <- c("interval", "daytype", "meansteps")
+library(ggplot2, quietly=TRUE)
+gp <- ggplot(daily, mapping=aes(x=interval, y=meansteps)) + geom_line() + facet_grid(daytype ~ .)
+gp
+```
